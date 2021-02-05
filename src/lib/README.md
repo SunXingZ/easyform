@@ -1,25 +1,15 @@
-# easyform
+### npm依赖：antd、events、lodash
 
-> 
+### 一、功能特性
 
-[![NPM](https://img.shields.io/npm/v/easyform.svg)](https://www.npmjs.com/package/easyform) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+#### 1、label和表单元素支持上下、左右排列
+#### 2、支持编辑、预览、禁用等几种模式
+#### 3、支持根据依赖字段动态加载options
+#### 4、表单右侧和底部支持显示扩展信息
+#### 5、支持根据依赖字段显示和隐藏
 
-## 安装
 
-```bash
-npm install --save easyform or yarn add easyform
-```
-
-## 功能特性
-
-### 1、label和表单元素支持上下、左右排列
-### 2、支持编辑、预览、禁用等几种模式
-### 3、支持根据依赖字段动态加载options
-### 4、表单右侧和底部支持显示扩展信息
-### 5、支持根据依赖字段显示和隐藏
-
-## Schema配置与说明
-
+### 二、Schema配置与说明
 ```
 {
     name: '',
@@ -56,7 +46,3 @@ npm install --save easyform or yarn add easyform
     // 控制表单显示与隐藏，对象类型，非必填， 示例：{ age: 18, type: [1, 2] } 表示age字段值为18且type字段值为1或2时表单会显示，否则隐藏。
 }
 ```
-
-## License
-
-MIT © [SunXingZ](https://github.com/SunXingZ)
