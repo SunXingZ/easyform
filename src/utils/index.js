@@ -61,6 +61,18 @@ export const setQueryVariables = (url = '', query = {}) => {
 }
 
 /**
+ * 根据options配置的url和表单值生成用于get请求的url
+ * @param {*} url options配置的url
+ * @param {*} formValues 所有表单值
+ */
+export const generateRequestUrl = (url = '', formValues = {}) => {
+	const { formVariables } = getQueryVariables(url);
+	const newQuery = {};
+	Object.keys(formVariables).map((query) => (newQuery[query] = formValues[formVariables[query]]));
+	return setQueryVariables(url, newQuery);
+};
+
+/**
  * 根据shouldUpdate对象判断表单是否满足显示的条件
  */
 export const shouldDisplay = (shouldUpdate = {}, getFieldValue = null) => {

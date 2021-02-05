@@ -291,6 +291,7 @@ const App = () => {
         return fields.map((field, index) => (
           <FormElement
             {...field}
+            preview={true}
             key={index + field.name}
             formRef={entryFormRef}
             formEvents={formEvents}

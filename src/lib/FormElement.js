@@ -13,11 +13,12 @@ import {
 	TimePicker,
 	Select,
 } from 'antd';
+import PreviewRender from './PreviewRender';
 import NumericInput from './NumericInput';
 import MultipleUpload from './MultipleUpload';
 import GalleryUpload from './GalleryUpload';
 import { useOptions } from '../hooks';
-import { shouldDisplay, getQueryVariables, setQueryVariables } from '../utils';
+import { shouldDisplay, getQueryVariables } from '../utils';
 
 import 'antd/dist/antd.css';
 
@@ -40,12 +41,27 @@ const supportElementTypes = [
 	'gallery',
 ];
 
+const renderPreview = (mode, props = {}) => {
+	let PreviewNode = null;
+	if (mode !== undefined) {
+		if (typeof mode == 'boolean') {
+			PreviewNode = mode == true ? <PreviewRender {...props} /> : null;
+		} else if (typeof mode == 'function') {
+			const element = mode(props);
+			PreviewNode = React.isValidElement(element) ? element : null;
+		} else {
+			PreviewNode = mode;
+		}
+	}
+	return PreviewNode;
+};
+
 /**
  * 根据配置生成对应的表单元素
  * @param {*}
  */
 const FieldElement = ({
-	editable = true,
+	preview = undefined,
 	elementType = '',
 	elementProps = {},
 	options = [],
@@ -105,6 +121,11 @@ const FieldElement = ({
 			Element = <GalleryUpload {...elementProps} {...props} />;
 			break;
 	}
+	const PreviewNode = renderPreview(preview, {
+		options,
+		elementType,
+		value: props.value,
+	});
 	return (
 		<div
 			style={{
@@ -113,8 +134,8 @@ const FieldElement = ({
 				justifyContent: 'space-between',
 				alignItems: 'center',
 			}}>
-			{editable ? Element : <span>{props.value}</span>}
-			{rightExtra && editable != false && (
+			{PreviewNode == null ? Element : PreviewNode}
+			{rightExtra && PreviewNode == null && (
 				<div style={{ minWidth: 80, paddingLeft: 10 }}>{rightExtra}</div>
 			)}
 		</div>
@@ -145,42 +166,24 @@ const FormElement = (props) => {
 		shouldUpdate,
 		...rest
 	} = props;
+	const isPreview = rest.preview !== undefined && rest.preview !== false;
 	const [options, updateOptions] = useOptions(rest.options);
 
 	useEffect(() => {
-		// 注册onValuesChange事件监听并根据依赖字段更新options
-		if (formEvents && typeof rest.options == 'string' && rest.editable != false) {
+		if (formEvents && typeof rest.options == 'string') {
+			// 初次加载一次options
+			const currentValues = formRef.current ? formRef.current.getFieldsValue() : {};
+			updateOptions(currentValues);
+			// 获取接口地址中值为表单字段的参数
 			const { formVariables } = getQueryVariables(rest.options);
 			const watchFormKeys = Object.values(formVariables);
+			// 如果options配置的接口表单参数字段存在则添加监听事件
 			if (watchFormKeys.length > 0) {
 				formEvents.addListener('onValuesChange', (values = {}, allValues = {}) => {
 					const key = Object.keys(values)[0];
 					if (watchFormKeys.includes(key)) {
-						const newQuery = {};
-						Object.keys(formVariables).map(
-							(query) => (newQuery[query] = allValues[formVariables[query]])
-						);
-						// updateOptions(setQueryVariables(rest.options, newQuery)); // 根据新生成的接口地址请求options
-						// 模拟更新
-						if (key == 'sex') {
-							if (values[key] == 0) {
-								updateOptions([
-									{ label: '张三', value: '张三' },
-									{ label: '李四', value: '李四' },
-									{ label: '王二麻子', value: '王二麻子' },
-								]);
-							}
-							if (values[key] == 1) {
-								updateOptions([
-									{ label: '小红', value: '小红' },
-									{ label: '小绿', value: '小绿' },
-									{ label: '小花', value: '小花' },
-								]);
-							}
-							if (values[key] == 3) {
-								updateOptions([]);
-							}
-						}
+						// 根据新生成的接口地址请求options
+						updateOptions(allValues);
 					}
 				});
 			}
@@ -194,10 +197,10 @@ const FormElement = (props) => {
 				label={label}
 				name={name}
 				extra={
-					// 不可编辑模式下不显示扩展信息
-					rest.editable == false ? null : (
+					// 预览模式下不显示扩展信息
+					!isPreview ? (
 						<FormExtra extra={itemProps.extra} description={description} />
-					)
+					) : null
 				}>
 				<FieldElement {...rest} options={options} />
 			</Form.Item>
@@ -226,8 +229,8 @@ const FormElement = (props) => {
 
 FormElement.propTypes = {
 	name: PropTypes.string.isRequired, // 表单name，antd字段
-	label: PropTypes.string, // 表单label，antd字段
-	editable: PropTypes.bool, // 表单是否可编辑，为false时表单组件展现为文本
+	label: PropTypes.node, // 表单label，antd字段
+	preview: PropTypes.oneOfType([PropTypes.func, PropTypes.bool, PropTypes.node]), // 开启表单预览模式，传入函数时应返回可渲染的元素，传true时渲染表单的value
 	elementType: PropTypes.oneOf(supportElementTypes).isRequired, // 表单类型，自定义字段
 	elementProps: PropTypes.object, // 表单元素的配置项，详见antd组件文档
 	itemProps: PropTypes.object, // Form.Item的配置项，详见antd组件文档
