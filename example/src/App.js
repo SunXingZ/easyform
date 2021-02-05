@@ -2,8 +2,6 @@ import React, { useEffect } from 'react'
 import { Image, message } from 'antd'
 import { FormElement, FormProvider, FormUtils } from 'easyform'
 
-import 'antd/dist/antd.css'; 
-
 const { checkUploadImage, getBase64 } = FormUtils
 
 const formItemLayout = {

@@ -19,6 +19,8 @@ import GalleryUpload from './GalleryUpload';
 import { useOptions } from '../hooks';
 import { shouldDisplay, getQueryVariables, setQueryVariables } from '../utils';
 
+import 'antd/dist/antd.css';
+
 const { Text } = Typography;
 
 // 支持的表单类型名称
