@@ -14,7 +14,7 @@ const useOptions = (initialValue = [], configs = defaultConfigs) => {
 			// 初始值为数组时直接使用
 			setOptions(transformOptions(data, configs));
 		} else if (typeof data == 'object') {
-			// 为字符串时请求该地址获取options
+			// object为当前表单的所有值，根据监听的值生成请求地址获取options
 			setOptions(
 				transformOptions(
 					[

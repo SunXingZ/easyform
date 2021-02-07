@@ -228,26 +228,24 @@ const FormElement = (props) => {
 };
 
 FormElement.propTypes = {
-	name: PropTypes.string.isRequired, // 表单name，antd字段
-	label: PropTypes.node, // 表单label，antd字段
-	preview: PropTypes.oneOfType([PropTypes.func, PropTypes.bool, PropTypes.node]), // 开启表单预览模式，传入函数时应返回可渲染的元素，传true时渲染表单的value
-	elementType: PropTypes.oneOf(supportElementTypes).isRequired, // 表单类型，自定义字段
-	elementProps: PropTypes.object, // 表单元素的配置项，详见antd组件文档
-	itemProps: PropTypes.object, // Form.Item的配置项，详见antd组件文档
+	name: PropTypes.string.isRequired,
+	label: PropTypes.node,
+	preview: PropTypes.oneOfType([PropTypes.func, PropTypes.bool, PropTypes.node]),
+	elementType: PropTypes.oneOf(supportElementTypes).isRequired,
+	elementProps: PropTypes.object,
+	itemProps: PropTypes.object,
 	options: PropTypes.oneOfType([
-		// select，radio，checkbox等表单的选项数组
-		PropTypes.string, // 作为接口名称+query使用
+		PropTypes.string,
 		PropTypes.arrayOf(
-			// 可以直接使用
 			PropTypes.shape({
 				label: PropTypes.string,
 				value: PropTypes.any,
 			})
 		),
 	]),
-	rightExtra: PropTypes.node, // 显示在表单右侧的扩展信息
-	description: PropTypes.node, // 显示在表单最底部的描述信息
-	shouldUpdate: PropTypes.object, // 配置表单显示与隐藏的字段
+	rightExtra: PropTypes.node,
+	description: PropTypes.node,
+	shouldUpdate: PropTypes.object,
 };
 
 export default FormElement;

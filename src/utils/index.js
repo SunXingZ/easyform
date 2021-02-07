@@ -103,7 +103,7 @@ export const checkIsOption = (option = {}) => {
 };
 
 /**
- * 检测options的每一项是否通过checkIsOption的验证，通过返回options，不通过返回空数组
+ * 检测options的每一项是否通过checkIsOption的验证
  * @param {*} options 检测的options数组
  */
 export const checkOptions = (options = []) => {
@@ -114,7 +114,7 @@ export const checkOptions = (options = []) => {
 };
 
 /**
- * 将options数组转换为{ label, value }格式
+ * 将options数组每一项转换为{ label, value }格式
  * @param {*} options 
  * @param {*} configs 
  */
