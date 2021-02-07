@@ -1,64 +1,43 @@
 # easyform
 
+#### 基于antd二次封装的表单管理组件
+
 > 
 
 [![NPM](https://img.shields.io/npm/v/easyform.svg)](https://www.npmjs.com/package/easyform) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+## 功能特性
+
+#### 1、label和表单元素支持上下、左右排列
+#### 2、支持编辑、预览、禁用等几种模式
+#### 3、支持根据依赖字段动态加载options
+#### 4、表单右侧和底部支持显示扩展信息
+#### 5、支持根据依赖字段显示和隐藏
+
 ## 安装
 
 ```bash
-npm install --save easyform or yarn add easyform
+npm install --save https://github.com/SunXingZ/easyform.git or yarn add https://github.com/SunXingZ/easyform.git
 ```
 
-## 功能特性
+## API
 
-### 1、label和表单元素支持上下、左右排列
-### 2、支持编辑、预览、禁用等几种模式
-### 3、支持根据依赖字段动态加载options
-### 4、表单右侧和底部支持显示扩展信息
-### 5、支持根据依赖字段显示和隐藏
+| 参数 | 说明 | 类型 | 默认值 | 示例 |
+| --- | --- | --- | --- | --- | --- |
+| name | Form.Item的name属性 | string | - | - |
+| label | Form.Item的label属性 | ReactNode | - | - |
+| preview | 表单预览模式 | boolean \| ReactNode \| function({ value, options, elementType }) | - | - |
+| elementType | 表单类型 | string | - | 'input' |
+| elementProps | 作用于表单元素的props，例如：disabled，placeholder等 | object | {} | - |
+| itemProps | 作用于Form.item的props，例如：rules，extra等 | object | {} | { rules: [ { required: true, message: '请输入' } ] } |
+| options | 当elementType为select，radio，checkbox等类型时需要配置 | string \| { label: '', value: '' }[]，为string时作为接口地址 + query。为array时作为options选项 | [] | string: https://api.xxx.com/v1/getOptions?type=1&name=user。array: [ { label: '张三', value: 'zhangsan' } ] |
+| rightExtra | 表单右侧显示的信息 | ReactNode | - | <Button>获取验证码</Button> |
+| description | 表单底部显示的信息，位于bottomExtra下 | ReactNode | - | 一段描述信息 |
+| shouldUpdate | 此属性会覆盖Form.Item的shouldUpdate，作为控制表单显示隐藏的配置。 | object | {} | { age: 18, type: [1, 2] } 表示age字段值为18且type字段值为1或2时表单会显示，否则隐藏。|
 
-## Schema配置与说明
+## 温馨提示
 
-```
-{
-    name: string,
-    // name：表单的name，字符串，必填
-
-    label: node,
-    // label：表单的label，字符串或元素，非必填
-
-    preview: function | boolean | node,
-    // preview：开启表单预览模式，传入函数时应返回可渲染的元素，传true时渲染表单的value，传false表示不开启预览模式
-
-    elementType: string,
-    // 表单类型名称，input、number、select等，小写英文字符串，必填
-    // 当elementType为上传类的组件时，value需要转为字符串，多文件上传每个url用逗号隔开
-
-    elementProps: object,
-    // antd 表单元素的props，对象类型，非必填
-
-    itemProps: object,
-    // antd Form.Item的props，对象类型，非必填
-
-    options: string | array,
-    // options：select，radio等元素的选项，数组或字符串
-    // 为字符串时作为接口名称+query使用，query部分name=‘${user}’表示需要监听同一个form下面的user字段的值，当变更时‘${user}’会被替换为实际的字段值并重新加载options
-    // 为数组时应配置为{ label: '', value: '' }格式的数组
-
-    rightExtra: node,
-    // 表单元素右侧显示的额外信息，字符串或其他元素，非必填
-
-    bottomExtra: node,
-    // 表单元素底部显示的额外信息，字符串或其他元素，非必填
-
-    description: node,
-    // 显示在最底部的描述信息，字符串或元素，非必填
-
-    shouldUpdate: object,
-    // 控制表单显示与隐藏，对象类型，非必填， 示例：{ age: 18, type: [1, 2] } 表示age字段值为18且type字段值为1或2时表单会显示，否则隐藏。
-}
-```
+#### 这个库目前还在开发中，随时可能发生重大变动，如使用请谨慎。
 
 ## License
 

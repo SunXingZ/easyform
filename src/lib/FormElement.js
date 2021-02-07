@@ -246,7 +246,6 @@ FormElement.propTypes = {
 		),
 	]),
 	rightExtra: PropTypes.node, // 显示在表单右侧的扩展信息
-	bottomExtra: PropTypes.node, // 显示在表单底部的扩展信息
 	description: PropTypes.node, // 显示在表单最底部的描述信息
 	shouldUpdate: PropTypes.object, // 配置表单显示与隐藏的字段
 };
