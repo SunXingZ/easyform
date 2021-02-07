@@ -30,7 +30,7 @@ npm install --save https://github.com/SunXingZ/easyform.git or yarn add https://
 | elementType | 表单类型 | string | - | 'input' |
 | elementProps | 作用于表单元素的props，例如：`disabled`，`placeholder`等 | object | {} | - |
 | itemProps | 作用于Form.item的props，例如：`rules`，`extra`等 | object | {} | { rules: [ { required: true, message: '请输入' } ] } |
-| options | 当elementType为`select`，`radio`，`checkbox`等类型时需要配置 | string \| array，为string时作为接口地址。为array时作为options选项 | [] | options: https://api.xxx.com/v1/getOptions?type=1&name=user \| options: [ { label: '张三', value: 'zhangsan' } ] |
+| options | 当elementType为`select`，`radio`，`checkbox`等类型时需要配置 | string \| object \| array，为string时作为接口地址。为object时object.url作为接口地址，object.labelKey指定option.label如何取值，object.valueKey指定option.value如何取值。为array时作为options选项 | [] | 详见：example下App.js中的示例 |
 | rightExtra | 表单右侧显示的信息 | ReactNode | - | <Button>获取验证码</Button> |
 | description | 表单底部显示的信息，位于Form.item的`extra`下 | ReactNode | - | 一段描述信息 |
 | shouldUpdate | 此属性会覆盖Form.Item的`shouldUpdate`，作为控制表单显示隐藏的配置。 | object | {} | { age: 18, type: [1, 2] } 表示`age`字段值为18且`type`字段值为1或2时表单会显示，否则隐藏。|

@@ -43,8 +43,8 @@ export const getQueryVariables = (url = '') => {
 
 /**
  * 在url上追加查询参数，已有的会覆盖
- * @param {*} url 
- * @param {*} query 
+ * @param {*} url
+ * @param {*} query
  */
 export const setQueryVariables = (url = '', query = {}) => {
 	const oldQuery = getQueryVariables(url)['variables'];
@@ -58,7 +58,7 @@ export const setQueryVariables = (url = '', query = {}) => {
 		}
 	}
 	return urlString;
-}
+};
 
 /**
  * 根据options配置的url和表单值生成用于get请求的url
@@ -115,14 +115,14 @@ export const checkOptions = (options = []) => {
 
 /**
  * 将options数组每一项转换为{ label, value }格式
- * @param {*} options 
- * @param {*} configs 
+ * @param {*} options
+ * @param {*} configs
  */
 export const transformOptions = (options = [], configs = {}) => {
-	const { labelName, valueName } = configs;
+	const { labelKey = 'name', valueKey = 'id' } = configs;
 	return checkOptions(options)
 		? options
-		: options.map((item) => ({ label: item[labelName], value: item[valueName] }));
+		: options.map((item) => ({ label: item[labelKey], value: item[valueKey] }));
 };
 
 /**
@@ -141,7 +141,7 @@ export const checkUploadImage = (file = {}, maxSize = 2) => {
 
 /**
  * 获取base格式图片
- * @param {*} file 
+ * @param {*} file
  */
 export const getBase64 = (file) => {
 	return new Promise((resolve, reject) => {
@@ -150,4 +150,43 @@ export const getBase64 = (file) => {
 		reader.onload = () => resolve(reader.result);
 		reader.onerror = (error) => reject(error);
 	});
+};
+
+/**
+ * 获取value的数据类型
+ * 示例：Object.prototype.toString.call('') ;   // string
+ * @param {*} value
+ */
+export const getValueType = (value) => {
+	return Object.prototype.toString
+		.call(value)
+		.replace('[', '')
+		.replace(']', '')
+		.split(' ')[1]
+		.toLowerCase();
+};
+
+/**
+ * 获取options配置
+ * @param {*} options
+ */
+export const getOptionsConfigs = (options) => {
+	let optionsConfigs = {
+		labelKey: 'name',
+		valueKey: 'id',
+	};
+	if (getValueType(options) == 'string') {
+		optionsConfigs.url = options;
+	}
+	if (getValueType(options) == 'object') {
+		const {
+			url = '',
+			labelKey = optionsConfigs.labelKey,
+			valueKey = optionsConfigs.valueKey,
+		} = options;
+		optionsConfigs.url = url;
+		optionsConfigs.labelKey = labelKey;
+		optionsConfigs.valueKey = valueKey;
+	}
+	return optionsConfigs;
 };

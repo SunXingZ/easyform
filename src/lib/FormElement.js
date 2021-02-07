@@ -18,7 +18,7 @@ import NumericInput from './NumericInput';
 import MultipleUpload from './MultipleUpload';
 import GalleryUpload from './GalleryUpload';
 import { useOptions } from '../hooks';
-import { shouldDisplay, getQueryVariables } from '../utils';
+import { shouldDisplay, getQueryVariables, getValueType, getOptionsConfigs } from '../utils';
 
 import 'antd/dist/antd.css';
 
@@ -169,13 +169,15 @@ const FormElement = (props) => {
 	const isPreview = rest.preview !== undefined && rest.preview !== false;
 	const [options, updateOptions] = useOptions(rest.options);
 
+	// 处理options为string，object情况
 	useEffect(() => {
-		if (formEvents && typeof rest.options == 'string') {
+		const optionsConfigs = getOptionsConfigs(rest.options);
+		if (optionsConfigs.url && formEvents) {
 			// 初次加载一次options
 			const currentValues = formRef.current ? formRef.current.getFieldsValue() : {};
 			updateOptions(currentValues);
 			// 获取接口地址中值为表单字段的参数
-			const { formVariables } = getQueryVariables(rest.options);
+			const { formVariables } = getQueryVariables(optionsConfigs.url);
 			const watchFormKeys = Object.values(formVariables);
 			// 如果options配置的接口表单参数字段存在则添加监听事件
 			if (watchFormKeys.length > 0) {
@@ -236,6 +238,7 @@ FormElement.propTypes = {
 	itemProps: PropTypes.object,
 	options: PropTypes.oneOfType([
 		PropTypes.string,
+		PropTypes.object,
 		PropTypes.arrayOf(
 			PropTypes.shape({
 				label: PropTypes.string,

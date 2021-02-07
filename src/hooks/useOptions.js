@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { transformOptions, generateRequestUrl } from '../utils';
+import { transformOptions, generateRequestUrl, getValueType, getOptionsConfigs } from '../utils';
 
-const defaultConfigs = {
-	labelName: 'name',
-	valueName: 'id',
-};
-
-const useOptions = (initialValue = [], configs = defaultConfigs) => {
-	const [options, setOptions] = useState([]);
+const useOptions = (initialValue = []) => {
+	const [options, setOptions] = useState(
+		getValueType(initialValue) == 'array' ? transformOptions(initialValue) : []
+	);
 
 	const updateOptions = (data = []) => {
-		if (data instanceof Array) {
+		const optionsConfigs = getOptionsConfigs(initialValue);
+		const { url, ...configs } = optionsConfigs;
+		if (getValueType(data) == 'array') {
 			// 初始值为数组时直接使用
 			setOptions(transformOptions(data, configs));
-		} else if (typeof data == 'object') {
+		} else if (getValueType(data) == 'object') {
 			// object为当前表单的所有值，根据监听的值生成请求地址获取options
 			setOptions(
 				transformOptions(
@@ -24,13 +23,9 @@ const useOptions = (initialValue = [], configs = defaultConfigs) => {
 					configs
 				)
 			);
-			console.log('接口url', generateRequestUrl(initialValue, data));
+			console.log('接口url', generateRequestUrl(url, data));
 		}
 	};
-
-	useEffect(() => {
-		updateOptions(initialValue);
-	}, []);
 
 	return [options, updateOptions];
 };

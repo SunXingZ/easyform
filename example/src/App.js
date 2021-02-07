@@ -193,9 +193,9 @@ const App = () => {
       elementType: 'radio',
       elementProps: {},
       options: [
-        { name: '男', id: 0 },
-        { name: '女', id: 1 },
-        { name: '未知', id: 3 }
+        { label: '男', value: 0 },
+        { label: '女', value: 1 },
+        { label: '未知', value: 3 }
       ],
       itemProps: {
         rules: [{ required: true, message: '请选择性别' }]
@@ -203,13 +203,28 @@ const App = () => {
       description: '当性别改变时用户的选项会重新加载'
     },
     {
-      name: 'users',
+      name: 'user',
       label: '用户',
       elementType: 'select',
       elementProps: {},
-      options: 'https://api.test.cn/getUserList?page=1&size=10&sex=${sex}',
+      options: ' https://api.xxx.com/v1/getOptions?name=users&sex=${sex}', // 性别变更时加载用户
       itemProps: {
         rules: [{ required: true, message: '请选择用户' }]
+      },
+      description: '当用户改变时团队的选项会重新加载'
+    },
+    {
+      name: 'team',
+      label: '团队',
+      elementType: 'select',
+      elementProps: {},
+      options: {
+        url: 'https://api.xxx.com/v1/getOptions?name=team&user=${user}',// 用户变更时加载团队
+        labelKey: 'name', // 返回值中哪个字段作为label
+        valueKey: 'id', // 返回值中哪个字段作为value
+      },
+      itemProps: {
+        rules: [{ required: true, message: '请选择团队' }]
       }
     },
     {
@@ -218,8 +233,8 @@ const App = () => {
       elementType: 'radio',
       elementProps: {},
       options: [
-        { name: ' 中国大陆居民身份证', id: 0 },
-        { name: ' 护照/其他海外证件', id: 1 }
+        { label: ' 中国大陆居民身份证', value: 0 },
+        { label: ' 护照/其他海外证件', value: 1 }
       ],
       itemProps: {
         rules: [{ required: true, message: '请选择证件类型' }]
@@ -235,7 +250,7 @@ const App = () => {
         rules: [{ required: true }]
       },
       shouldUpdate: {
-        card: 1
+        card: 1 // card字段为1时显示此表单，如配置多个，显示条件为 && 关系
       }
     },
     {
