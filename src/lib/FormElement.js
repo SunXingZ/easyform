@@ -1,45 +1,20 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import {
-	Form,
-	Input,
-	Typography,
-	Space,
-	Radio,
-	Checkbox,
-	Cascader,
-	DatePicker,
-	Switch,
-	TimePicker,
-	Select,
-} from 'antd';
+import { Form, Typography, Space } from 'antd';
 import PreviewRender from './PreviewRender';
-import NumericInput from './NumericInput';
-import MultipleUpload from './MultipleUpload';
-import GalleryUpload from './GalleryUpload';
-import { useOptions } from '../hooks';
-import { shouldDisplay, getQueryVariables, getValueType, getOptionsConfigs } from '../utils';
+import { useOptions, useFormContext } from '../hooks';
+import {
+	shouldDisplay,
+	getQueryVariables,
+	getValueType,
+	getOptionsConfigs,
+	getFormComponent,
+	ComponentTypes,
+} from '../utils';
 
 import 'antd/dist/antd.css';
 
 const { Text } = Typography;
-
-// 支持的表单类型名称
-const supportElementTypes = [
-	'input',
-	'number',
-	'textarea',
-	'select',
-	'checkbox',
-	'cascader',
-	'radio',
-	'datepicker',
-	'rangepicker',
-	'timepicker',
-	'switch',
-	'upload',
-	'gallery',
-];
 
 const renderPreview = (mode, props = {}) => {
 	let PreviewNode = null;
@@ -64,67 +39,14 @@ const FieldElement = ({
 	preview = undefined,
 	elementType = '',
 	elementProps = {},
-	options = [],
 	rightExtra = null,
 	...props
 }) => {
-	elementType = elementType.toLowerCase();
-	let Element = null;
-	switch (elementType) {
-		case 'input':
-			Element = <Input {...elementProps} {...props} />;
-			break;
-		case 'number':
-			Element = <NumericInput {...elementProps} {...props} />;
-			break;
-		case 'textarea':
-			Element = <Input.TextArea {...elementProps} {...props} />;
-			break;
-		case 'select':
-			Element = <Select {...elementProps} {...props} options={options} />;
-			break;
-		case 'checkbox':
-			Element = <Checkbox.Group {...elementProps} {...props} options={options} />;
-			break;
-		case 'cascader':
-			Element = <Cascader {...elementProps} {...props} options={options} />;
-			break;
-		case 'radio':
-			Element = (
-				<Radio.Group {...elementProps} {...props}>
-					{options.map(({ label, value, ...args }, index) => {
-						return (
-							<Radio key={value + '_' + index} value={value} {...args}>
-								{label}
-							</Radio>
-						);
-					})}
-				</Radio.Group>
-			);
-			break;
-		case 'datepicker':
-			Element = <DatePicker {...elementProps} {...props} />;
-			break;
-		case 'rangepicker':
-			Element = <DatePicker.RangePicker {...elementProps} {...props} />;
-			break;
-		case 'timepicker':
-			Element = <TimePicker {...elementProps} {...props} />;
-			break;
-		case 'switch':
-			Element = <Switch {...elementProps} {...props} checked={Boolean(props.value)} />;
-			break;
-		case 'upload':
-			Element = <MultipleUpload {...elementProps} {...props} />;
-			break;
-		case 'gallery':
-			Element = <GalleryUpload {...elementProps} {...props} />;
-			break;
-	}
+	const FormComponent = getFormComponent(elementType, Object.assign({}, elementProps, props));
 	const PreviewNode = renderPreview(preview, {
-		options,
-		elementType,
 		value: props.value,
+		options: props.options,
+		elementType: elementType.toLowerCase(),
 	});
 	return (
 		<div
@@ -134,7 +56,7 @@ const FieldElement = ({
 				justifyContent: 'space-between',
 				alignItems: 'center',
 			}}>
-			{PreviewNode == null ? Element : PreviewNode}
+			{PreviewNode == null ? FormComponent : PreviewNode}
 			{rightExtra && PreviewNode == null && (
 				<div style={{ minWidth: 80, paddingLeft: 10 }}>{rightExtra}</div>
 			)}
@@ -161,13 +83,12 @@ const FormElement = (props) => {
 		name = '',
 		description = '',
 		itemProps = {},
-		formRef = {},
-		formEvents = null,
 		shouldUpdate,
 		...rest
 	} = props;
 	const isPreview = rest.preview !== undefined && rest.preview !== false;
 	const [options, updateOptions] = useOptions(rest.options);
+	const { formRef, formEvents } = useFormContext();
 
 	// 处理options为string，object情况
 	useEffect(() => {
@@ -233,7 +154,7 @@ FormElement.propTypes = {
 	name: PropTypes.string.isRequired,
 	label: PropTypes.node,
 	preview: PropTypes.oneOfType([PropTypes.func, PropTypes.bool, PropTypes.node]),
-	elementType: PropTypes.oneOf(supportElementTypes).isRequired,
+	elementType: PropTypes.oneOf(ComponentTypes).isRequired,
 	elementProps: PropTypes.object,
 	itemProps: PropTypes.object,
 	options: PropTypes.oneOfType([

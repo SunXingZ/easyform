@@ -2,11 +2,13 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Form } from 'antd';
 import { EventEmitter } from 'events';
+import FormContext from './FormContext';
+
+const { Provider } = FormContext;
 
 class FormProvider extends PureComponent {
 	constructor(props) {
 		super(props);
-		this.formRef = React.createRef();
 		this.formEvents = new EventEmitter();
 		this.state = {};
 	}
@@ -21,15 +23,19 @@ class FormProvider extends PureComponent {
 	}
 
 	render() {
+		const { formRef, ...formProps } = this.props;
 		return (
-			<Form {...this.props} ref={this.formRef} onValuesChange={this.handleValuesChange}>
-				{this.props.children({
-					formRef: this.formRef,
+			<Provider
+				value={{
+					formRef,
 					formEvents: this.formEvents,
-				})}
-			</Form>
+				}}>
+				<Form {...formProps} ref={formRef} onValuesChange={this.handleValuesChange}>
+					{this.props.children}
+				</Form>
+			</Provider>
 		);
 	}
 }
 
-export default FormProvider;
+export default React.forwardRef((props, ref) => <FormProvider {...props} formRef={ref} />);

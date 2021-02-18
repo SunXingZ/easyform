@@ -1,5 +1,7 @@
 import { endsWith } from 'lodash';
 
+export { ComponentTypes, default as getFormComponent } from './getFormComponents';
+
 /**
  * 将url列表转换为指定格式
  * @param {*} files 默认图片url列表
@@ -172,6 +174,7 @@ export const getValueType = (value) => {
  */
 export const getOptionsConfigs = (options) => {
 	let optionsConfigs = {
+		dataKey: 'data',
 		labelKey: 'name',
 		valueKey: 'id',
 	};
@@ -181,10 +184,12 @@ export const getOptionsConfigs = (options) => {
 	if (getValueType(options) == 'object') {
 		const {
 			url = '',
+			dataKey = optionsConfigs.dataKey,
 			labelKey = optionsConfigs.labelKey,
 			valueKey = optionsConfigs.valueKey,
 		} = options;
 		optionsConfigs.url = url;
+		optionsConfigs.dataKey = dataKey;
 		optionsConfigs.labelKey = labelKey;
 		optionsConfigs.valueKey = valueKey;
 	}

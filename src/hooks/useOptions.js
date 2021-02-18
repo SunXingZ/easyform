@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
+import axios from 'axios';
 import { transformOptions, generateRequestUrl, getValueType, getOptionsConfigs } from '../utils';
 
 const useOptions = (initialValue = []) => {
@@ -6,24 +7,20 @@ const useOptions = (initialValue = []) => {
 		getValueType(initialValue) == 'array' ? transformOptions(initialValue) : []
 	);
 
-	const updateOptions = (data = []) => {
+	const updateOptions = async (params = []) => {
 		const optionsConfigs = getOptionsConfigs(initialValue);
-		const { url, ...configs } = optionsConfigs;
-		if (getValueType(data) == 'array') {
+		const { url, dataKey = 'data', ...configs } = optionsConfigs;
+		if (getValueType(params) == 'array') {
 			// 初始值为数组时直接使用
-			setOptions(transformOptions(data, configs));
-		} else if (getValueType(data) == 'object') {
+			setOptions(transformOptions(params, configs));
+		} else if (getValueType(params) == 'object') {
 			// object为当前表单的所有值，根据监听的值生成请求地址获取options
-			setOptions(
-				transformOptions(
-					[
-						{ label: '张三', value: '张三' },
-						{ label: '李四', value: '李四' },
-					],
-					configs
-				)
-			);
-			console.log('接口url', generateRequestUrl(url, data));
+			const { status, data = {} } = await axios.get(generateRequestUrl(url, params));
+			if (status == 200) {
+				if (data[dataKey] instanceof Array) {
+					setOptions(transformOptions(data[dataKey], configs));
+				}
+			}
 		}
 	};
 
