@@ -9,6 +9,7 @@ const { Provider } = FormContext;
 class FormProvider extends PureComponent {
 	constructor(props) {
 		super(props);
+		this.formRef = React.createRef(null);
 		this.formEvents = new EventEmitter();
 		this.state = {};
 	}
@@ -24,13 +25,16 @@ class FormProvider extends PureComponent {
 
 	render() {
 		const { formRef, ...formProps } = this.props;
+		if (formRef) {
+			this.formRef = formRef;
+		}
 		return (
 			<Provider
 				value={{
-					formRef,
+					formRef: this.formRef,
 					formEvents: this.formEvents,
 				}}>
-				<Form {...formProps} ref={formRef} onValuesChange={this.handleValuesChange}>
+				<Form {...formProps} ref={this.formRef} onValuesChange={this.handleValuesChange}>
 					{this.props.children}
 				</Form>
 			</Provider>
