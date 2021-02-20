@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Form, Typography, Space } from 'antd';
-import PreviewRender from './PreviewRender';
 import { useOptions, useFormContext } from '../hooks';
 import {
 	shouldDisplay,
@@ -9,26 +8,17 @@ import {
 	getValueType,
 	getOptionsConfigs,
 	getFormComponent,
+	getPreviewComponent,
 	ComponentTypes,
 } from '../utils';
 
-import 'antd/dist/antd.css';
-
 const { Text } = Typography;
 
-const renderPreview = (mode, props = {}) => {
-	let PreviewNode = null;
-	if (mode !== undefined) {
-		if (typeof mode == 'boolean') {
-			PreviewNode = mode == true ? <PreviewRender {...props} /> : null;
-		} else if (typeof mode == 'function') {
-			const element = mode(props);
-			PreviewNode = React.isValidElement(element) ? element : null;
-		} else {
-			PreviewNode = mode;
-		}
-	}
-	return PreviewNode;
+const fieldStyles = {
+	display: 'flex',
+	flexDirection: 'row',
+	justifyContent: 'space-between',
+	alignItems: 'center',
 };
 
 /**
@@ -36,28 +26,27 @@ const renderPreview = (mode, props = {}) => {
  * @param {*}
  */
 const FieldElement = ({
-	preview = undefined,
+	preview,
 	elementType = '',
 	elementProps = {},
 	rightExtra = null,
 	...props
 }) => {
-	const FormComponent = getFormComponent(elementType, Object.assign({}, elementProps, props));
-	const PreviewNode = renderPreview(preview, {
-		value: props.value,
-		options: props.options,
-		elementType: elementType.toLowerCase(),
-	});
+	const isPreview = preview !== undefined && preview !== false;
+	let RenderComponent = null;
+	if (isPreview) {
+		RenderComponent = getPreviewComponent(preview, {
+			value: props.value,
+			options: props.options,
+			elementType: elementType.toLowerCase(),
+		});
+	} else {
+		RenderComponent = getFormComponent(elementType, Object.assign({}, elementProps, props));
+	}
 	return (
-		<div
-			style={{
-				display: 'flex',
-				flexDirection: 'row',
-				justifyContent: 'space-between',
-				alignItems: 'center',
-			}}>
-			{PreviewNode == null ? FormComponent : PreviewNode}
-			{rightExtra && PreviewNode == null && (
+		<div style={fieldStyles}>
+			{RenderComponent}
+			{rightExtra && !isPreview && (
 				<div style={{ minWidth: 80, paddingLeft: 10 }}>{rightExtra}</div>
 			)}
 		</div>
@@ -128,7 +117,7 @@ const FormElement = (props) => {
 				<FieldElement {...rest} options={options} />
 			</Form.Item>
 		);
-		if (typeof shouldUpdate == 'object') {
+		if (getValueType(shouldUpdate) == 'object') {
 			const shouldUpdateKeys = Object.keys(shouldUpdate);
 			return (
 				<Form.Item

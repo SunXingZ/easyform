@@ -2,6 +2,8 @@ import { endsWith } from 'lodash';
 
 export { ComponentTypes, default as getFormComponent } from './getFormComponents';
 
+export { default as getPreviewComponent } from './getPreviewComponent';
+
 /**
  * 将url列表转换为指定格式
  * @param {*} files 默认图片url列表
