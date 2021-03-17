@@ -4,6 +4,8 @@ import { Form } from 'antd';
 import { EventEmitter } from 'events';
 import FormContext from './FormContext';
 
+import '../index.css';
+
 const { Provider } = FormContext;
 
 class FormProvider extends PureComponent {
